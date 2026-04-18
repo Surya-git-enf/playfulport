@@ -1,4 +1,18 @@
-
 export default function Home() {
-  return <h1>Hello Playful 🚀</h1>;
+        return (
+            <main
+                  style={{
+                          minHeight: "100vh",
+                                  background: "#050505",
+                                          color: "white",
+                                                  display: "flex",
+                                                          alignItems: "center",
+                                                                  justifyContent: "center",
+                                                                          fontSize: "32px",
+                                                                                }}
+                                                                                    >
+                                                                                          <h1>Playful is Live 🚀</h1>
+                                                                                              </main>
+                                                                                                );
+                                                                                                }
 }
