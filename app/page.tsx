@@ -8,12 +8,10 @@ export default function Home() {
                                                     display: "flex",
                                                             alignItems: "center",
                                                                     justifyContent: "center",
-                                                                            fontSize: "32px",
-                                                                                    fontFamily: "sans-serif",
-                                                                                          }}
-                                                                                              >
-                                                                                                    <h1>Playful is Live 🚀</h1>
-                                                                                                        </main>
-                                                                                                          );
-                                                                                                          }
+                                                                          }}
+                                                                              >
+                                                                                    <h1>Playful is Live 🚀</h1>
+                                                                                        </main>
+                                                                                          );
+                                                                                          }
 }
