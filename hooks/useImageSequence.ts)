@@ -1,0 +1,44 @@
+// hooks/useImageSequence.ts
+"use client";
+import { useState, useEffect } from 'react';
+
+export function useImageSequence(frameCount: number, pathPrefix: string, extension: string = '.png') {
+  const [images, setImages] = useState<HTMLImageElement[]>([]);
+  const [loadedProgress, setLoadedProgress] = useState(0);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    let loadedCount = 0;
+    const imgArray: HTMLImageElement[] = [];
+
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      // Pads the number to 3 digits (e.g., 001, 270)
+      const paddedIndex = i.toString().padStart(3, '0');
+      img.src = `${pathPrefix}${paddedIndex}${extension}`;
+      
+      img.onload = () => {
+        loadedCount++;
+        setLoadedProgress(Math.round((loadedCount / frameCount) * 100));
+        if (loadedCount === frameCount) {
+          setImages(imgArray);
+          setIsReady(true);
+        }
+      };
+
+      img.onerror = () => {
+        console.warn(`Failed to load: ${img.src}`);
+        loadedCount++;
+        if (loadedCount === frameCount) {
+          setImages(imgArray);
+          setIsReady(true);
+        }
+      };
+
+      imgArray.push(img);
+    }
+  }, [frameCount, pathPrefix, extension]);
+
+  return { images, loadedProgress, isReady };
+}
+
