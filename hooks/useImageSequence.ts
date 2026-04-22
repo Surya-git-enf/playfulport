@@ -1,25 +1,37 @@
-// hooks/useImageSequence.ts
-"use client";
-import { useState, useEffect } from 'react';
 
-export function useImageSequence(frameCount: number, pathPrefix: string, extension: string = '.png') {
+"use client";
+import { useState, useEffect } from "react";
+
+export function useImageSequence(
+  frameCount: number,
+  pathPrefix: string,
+  extension: string = ".jpg"
+) {
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loadedProgress, setLoadedProgress] = useState(0);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    let isMounted = true; // prevents state updates after unmount
     let loadedCount = 0;
-    const imgArray: HTMLImageElement[] = [];
 
-    for (let i = 1; i <= frameCount; i++) {
+    const imgArray: HTMLImageElement[] = new Array(frameCount);
+
+    for (let i = 0; i < frameCount; i++) {
       const img = new Image();
-      // Pads the number to 3 digits (e.g., 001, 270)
-      const paddedIndex = i.toString().padStart(3, '0');
+
+      // 3-digit padding → matches ezgif-frame-001.jpg
+      const paddedIndex = (i + 1).toString().padStart(3, "0");
+
       img.src = `${pathPrefix}${paddedIndex}${extension}`;
-      
+
       img.onload = () => {
         loadedCount++;
+
+        if (!isMounted) return;
+
         setLoadedProgress(Math.round((loadedCount / frameCount) * 100));
+
         if (loadedCount === frameCount) {
           setImages(imgArray);
           setIsReady(true);
@@ -27,18 +39,24 @@ export function useImageSequence(frameCount: number, pathPrefix: string, extensi
       };
 
       img.onerror = () => {
-        console.warn(`Failed to load: ${img.src}`);
+        console.warn(`❌ Failed to load: ${img.src}`);
         loadedCount++;
+
+        if (!isMounted) return;
+
         if (loadedCount === frameCount) {
           setImages(imgArray);
           setIsReady(true);
         }
       };
 
-      imgArray.push(img);
+      imgArray[i] = img;
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [frameCount, pathPrefix, extension]);
 
   return { images, loadedProgress, isReady };
 }
-
