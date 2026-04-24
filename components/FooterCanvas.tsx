@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -9,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function FooterCanvas({ images }: any) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!images.length) return;
@@ -17,33 +16,55 @@ export default function FooterCanvas({ images }: any) {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const draw = (index: number) => {
-      const img = images[index];
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: "top top",
-      end: "+=400%",
-      scrub: true,
-      pin: true,
-      onUpdate: (self) => {
-        const frame = Math.floor((1 - self.progress) * (images.length - 1));
-        draw(frame);
+    resize();
+    window.addEventListener("resize", resize);
+
+    const draw = (img: HTMLImageElement) => {
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const scale = Math.max(cw / img.width, ch / img.height);
+      const x = (cw - img.width * scale) / 2;
+      const y = (ch - img.height * scale) / 2;
+
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+    };
+
+    const state = { frame: images.length - 1 };
+
+    gsap.to(state, {
+      frame: 0,
+      ease: "none",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "+=300%",
+        scrub: true,
+        pin: true,
+      },
+      onUpdate: () => {
+        draw(images[Math.round(state.frame)]);
       },
     });
 
-    draw(images.length - 1);
+    draw(images[images.length - 1]);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
   }, [images]);
 
   return (
-    <section ref={containerRef} className="relative h-screen w-full">
-      <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
+    <section ref={sectionRef} className="relative h-screen w-full">
+      <canvas ref={canvasRef} className="absolute inset-0" />
     </section>
   );
 }
