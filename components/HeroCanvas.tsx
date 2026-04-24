@@ -1,3 +1,7 @@
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 // components/HeroCanvas.tsx
 "use client";
 import { useEffect, useRef } from 'react';
