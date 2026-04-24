@@ -4,125 +4,69 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { drawImageProp } from "@/utils/canvas";
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface HeroCanvasProps {
-  images: HTMLImageElement[];
-}
-
-export default function HeroCanvas({ images }: HeroCanvasProps) {
+export default function HeroCanvas({ images }: any) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const textPanelRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!images.length || !canvasRef.current || !sectionRef.current) return;
+    if (!images.length) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
 
-    let rafId = 0;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    const renderFrame = (index: number) => {
-      const safeIndex = Math.max(0, Math.min(images.length - 1, index));
-      drawImageProp(ctx, images[safeIndex], canvas);
+    const draw = (index: number) => {
+      const img = images[index];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     };
 
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      renderFrame(0);
-    };
+    ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: "top top",
+      end: "+=400%",
+      scrub: true,
+      pin: true,
+      onUpdate: (self) => {
+        const frame = Math.floor(self.progress * (images.length - 1));
+        draw(frame);
 
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    const state = { frame: 0 };
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=300%",
-        pin: true,
-        scrub: 0.5,
-        anticipatePin: 1,
+        // overlay reveal
+        if (self.progress > 0.7) {
+          const p = (self.progress - 0.7) / 0.3;
+          gsap.to(overlayRef.current, { opacity: p });
+          gsap.to(textRef.current, { opacity: p, y: 0 });
+        }
       },
     });
 
-    tl.to(state, {
-      frame: images.length - 1,
-      ease: "none",
-      duration: 1,
-      snap: "frame",
-      onUpdate: () => {
-        cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          renderFrame(Math.round(state.frame));
-        });
-      },
-    });
-
-    tl.to(
-      overlayRef.current,
-      {
-        yPercent: 0,
-        opacity: 1,
-        duration: 0.25,
-        ease: "power2.out",
-      },
-      ">"
-    );
-
-    tl.fromTo(
-      textPanelRef.current,
-      { x: 80, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.35, ease: "power3.out" },
-      "<0.05"
-    );
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", resizeCanvas);
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-      tl.kill();
-    };
+    draw(0);
   }, [images]);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative h-screen w-full overflow-hidden bg-[#f6f7fb]"
-    >
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+    <section ref={containerRef} className="relative h-screen w-full">
+      <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
 
-      <div className="pointer-events-none absolute bottom-0 z-10 h-[10%] w-full bg-gradient-to-t from-white/90 to-transparent" />
-
+      {/* BLACK SHADOW */}
       <div
         ref={overlayRef}
-        className="pointer-events-none absolute bottom-0 z-20 h-2/5 w-full translate-y-full bg-gradient-to-t from-white via-white/95 to-transparent opacity-0"
+        className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent opacity-0"
       />
 
-      <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-end px-6 md:px-16">
-        <div
-          ref={textPanelRef}
-          className="max-w-md rounded-3xl border border-white/70 bg-white/45 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08)] backdrop-blur-2xl opacity-0 md:p-10"
-        >
-          <h1 className="mb-4 text-4xl font-black uppercase tracking-[0.18em] text-gray-900 md:text-5xl">
-            The Prime Sentinel
-          </h1>
-          <p className="text-base leading-relaxed text-gray-700 md:text-lg">
-            Heavy artillery. Unbreakable will. The commander of the fleet has arrived.
-          </p>
-        </div>
+      {/* TEXT */}
+      <div
+        ref={textRef}
+        className="absolute right-10 bottom-20 text-white opacity-0 translate-y-10"
+      >
+        <h1 className="text-5xl font-bold">Bumble Bee</h1>
+        <p className="mt-2 text-lg">Autonomous scout unit</p>
       </div>
     </section>
   );
