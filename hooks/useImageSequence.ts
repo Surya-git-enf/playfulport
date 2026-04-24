@@ -1,64 +1,49 @@
 
 "use client";
-import { useState, useEffect } from "react";
 
-export function useImageSequence(
-  frameCount: number,
-  pathPrefix: string,
-  extension: string = ".jpg"
-) {
-  const [images, setImages] = useState<HTMLImageElement[]>([]);
-  const [loadedProgress, setLoadedProgress] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+import { useEffect, useRef, useState } from "react";
+
+const TOTAL_FRAMES = 270;
+
+function getFramePath(index: number): string {
+  const num = String(index + 1).padStart(3, "0");
+  return `/sequence/ezgif-frame-${num}.jpg`;
+}
+
+export function useImageSequence() {
+  const imagesRef = useRef<HTMLImageElement[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    let isMounted = true;
+    let cancelled = false;
     let loadedCount = 0;
+    const total = TOTAL_FRAMES;
+    const images: HTMLImageElement[] = new Array(total);
 
-    const imgArray: HTMLImageElement[] = new Array(frameCount);
+    const onLoad = () => {
+      if (cancelled) return;
+      loadedCount++;
+      if (loadedCount === total) {
+        imagesRef.current = images;
+        setLoaded(true);
+      } else {
+        setProgress(loadedCount / total);
+      }
+    };
 
-    for (let i = 0; i < frameCount; i++) {
+    for (let i = 0; i < total; i++) {
       const img = new Image();
-
-      const paddedIndex = (i + 1).toString().padStart(3, "0");
-      const src = `${pathPrefix}${paddedIndex}${extension}`;
-
-      img.src = src;
-
-      img.onload = () => {
-        loadedCount++;
-
-        if (!isMounted) return;
-
-        setLoadedProgress(Math.round((loadedCount / frameCount) * 100));
-
-        if (loadedCount === frameCount) {
-          console.log("✅ All frames loaded");
-          setImages(imgArray);
-          setIsReady(true);
-        }
-      };
-
-      img.onerror = () => {
-        console.error("❌ Missing frame:", src);
-
-        loadedCount++;
-
-        if (!isMounted) return;
-
-        if (loadedCount === frameCount) {
-          setImages(imgArray);
-          setIsReady(true);
-        }
-      };
-
-      imgArray[i] = img;
+      img.src = getFramePath(i);
+      img.onload = onLoad;
+      img.onerror = onLoad; // Don't block on missing frames
+      images[i] = img;
     }
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
-  }, [frameCount, pathPrefix, extension]);
+  }, []);
 
-  return { images, loadedProgress, isReady };
+  return { images: imagesRef, loaded, loadProgress: progress, totalFrames: TOTAL_FRAMES };
 }
