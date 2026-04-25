@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -48,13 +47,16 @@ export default function HeroCanvas() {
   const setupCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = window.innerWidth;
     const h = window.innerHeight;
+
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     canvas.style.width = `${w}px`;
     canvas.style.height = `${h}px`;
+
     const ctx = canvas.getContext("2d");
     if (ctx) ctx.scale(dpr, dpr);
   };
@@ -62,12 +64,16 @@ export default function HeroCanvas() {
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const imgs = images.current;
     if (!imgs || imgs.length === 0) return;
+
     const img = imgs[Math.max(0, Math.min(index, imgs.length - 1))];
     if (!img || !img.complete || img.naturalWidth === 0) return;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     drawCover(ctx, img, canvas.width / dpr, canvas.height / dpr);
   };
@@ -80,6 +86,7 @@ export default function HeroCanvas() {
       }
       rafRef.current = requestAnimationFrame(loop);
     };
+
     rafRef.current = requestAnimationFrame(loop);
   };
 
@@ -103,30 +110,18 @@ export default function HeroCanvas() {
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // Frame sync
         const frameIdx = Math.floor(progress * (totalFrames - 1));
         if (frameIdx !== frameIndexRef.current) {
           frameIndexRef.current = frameIdx;
           needsDrawRef.current = true;
         }
 
-        // Overlay — solid black rises from bottom, full coverage by 100%
         const overlay = overlayRef.current;
         if (overlay) {
-          if (progress >= 0.75) {
-            const alpha = (progress - 0.75) / 0.25;
-            const clamped = Math.min(alpha, 1);
-            overlay.style.opacity = String(clamped);
-            // Height grows from 40% to 100% of screen
-            const heightPct = 40 + 60 * clamped;
-            overlay.style.height = `${heightPct}%`;
-          } else {
-            overlay.style.opacity = "0";
-            overlay.style.height = "40%";
-          }
+          overlay.style.opacity = "0.1";
+          overlay.style.height = "10%";
         }
 
-        // Text reveal
         const text = textRef.current;
         if (text) {
           if (progress >= 0.82) {
@@ -145,6 +140,7 @@ export default function HeroCanvas() {
       setupCanvas();
       drawFrame(frameIndexRef.current);
     };
+
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -166,7 +162,6 @@ export default function HeroCanvas() {
         background: "#000",
       }}
     >
-      {/* Loading screen */}
       {!loaded && (
         <div
           style={{
@@ -186,8 +181,14 @@ export default function HeroCanvas() {
             gap: "20px",
           }}
         >
-          <div style={{ marginBottom: "8px", fontSize: "22px", letterSpacing: "0.15em" }}>
-            Playful
+          <div
+            style={{
+              marginBottom: "8px",
+              fontSize: "22px",
+              letterSpacing: "0.15em",
+            }}
+          >
+            Optimus Prime
           </div>
           <div
             style={{
@@ -218,19 +219,11 @@ export default function HeroCanvas() {
         </div>
       )}
 
-      {/* Canvas */}
       <canvas
         ref={canvasRef}
         style={{ position: "absolute", inset: 0, display: "block" }}
       />
 
-      {/* 
-        ─────────────────────────────────────────────────
-        BLACK OVERLAY — rises from bottom like a curtain
-        ─────────────────────────────────────────────────
-        Starts at bottom, grows upward to full screen.
-        Solid black — you WILL feel it.
-      */}
       <div
         ref={overlayRef}
         style={{
@@ -238,22 +231,16 @@ export default function HeroCanvas() {
           bottom: 0,
           left: 0,
           right: 0,
-          height: "40%",
+          height: "10%",
           background: "#000",
-          opacity: 0,
+          opacity: 0.1,
           pointerEvents: "none",
           zIndex: 2,
-          // Soft edge at the top of the curtain
           maskImage: "linear-gradient(to bottom, transparent 0%, black 18%)",
           WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 18%)",
         }}
       />
 
-      {/* 
-        Text panel — appears on top of the black curtain
-        ─── TO CHANGE TEXT: edit the strings below ───
-        ─── TO CHANGE BRAND NAME: replace "Playful" ──
-      */}
       <div
         ref={textRef}
         style={{
@@ -268,7 +255,6 @@ export default function HeroCanvas() {
           pointerEvents: "none",
         }}
       >
-        {/* ↓ CHANGE BRAND LABEL HERE */}
         <p
           style={{
             margin: "0 0 10px 0",
@@ -280,10 +266,9 @@ export default function HeroCanvas() {
             fontWeight: 500,
           }}
         >
-          Playful Studio
+          Autobot Leader
         </p>
 
-        {/* ↓ CHANGE HEADLINE HERE */}
         <h2
           style={{
             margin: "0 0 18px 0",
@@ -295,10 +280,9 @@ export default function HeroCanvas() {
             letterSpacing: "-0.015em",
           }}
         >
-          Every frame,<br />a breath.
+          Optimus Prime,<br />the noble leader.
         </h2>
 
-        {/* ↓ CHANGE BODY TEXT HERE */}
         <p
           style={{
             margin: 0,
@@ -310,11 +294,10 @@ export default function HeroCanvas() {
             fontWeight: 300,
           }}
         >
-          270 frames of cinematic motion,<br />
-          perfectly synchronized to your scroll.
+          A symbol of courage, wisdom, and strength,<br />
+          transformed into every frame of the journey.
         </p>
       </div>
     </div>
   );
-      }
-          
+        }
