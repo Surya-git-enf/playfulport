@@ -316,4 +316,5 @@ export default function HeroCanvas() {
       </div>
     </div>
   );
-}
+      }
+          
