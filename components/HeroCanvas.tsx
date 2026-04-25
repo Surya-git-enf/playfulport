@@ -45,7 +45,6 @@ export default function HeroCanvas() {
 
   const { images, loaded, loadProgress, totalFrames } = useImageSequence();
 
-  // Setup canvas DPR
   const setupCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -60,7 +59,6 @@ export default function HeroCanvas() {
     if (ctx) ctx.scale(dpr, dpr);
   };
 
-  // Draw a specific frame immediately
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -74,7 +72,6 @@ export default function HeroCanvas() {
     drawCover(ctx, img, canvas.width / dpr, canvas.height / dpr);
   };
 
-  // RAF draw loop — only draws when flagged
   const startRAF = () => {
     const loop = () => {
       if (needsDrawRef.current) {
@@ -90,11 +87,8 @@ export default function HeroCanvas() {
     if (!loaded) return;
 
     setupCanvas();
-
-    // Draw frame 0 immediately
     frameIndexRef.current = 0;
     drawFrame(0);
-
     startRAF();
 
     const section = sectionRef.current!;
@@ -109,32 +103,36 @@ export default function HeroCanvas() {
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // --- Frame sync ---
+        // Frame sync
         const frameIdx = Math.floor(progress * (totalFrames - 1));
         if (frameIdx !== frameIndexRef.current) {
           frameIndexRef.current = frameIdx;
           needsDrawRef.current = true;
         }
 
-        // --- Overlay ---
+        // Overlay — solid black rises from bottom, full coverage by 100%
         const overlay = overlayRef.current;
         if (overlay) {
-          if (progress >= 0.8) {
-            const alpha = (progress - 0.8) / 0.2;
-            overlay.style.opacity = String(Math.min(alpha, 1));
+          if (progress >= 0.75) {
+            const alpha = (progress - 0.75) / 0.25;
+            const clamped = Math.min(alpha, 1);
+            overlay.style.opacity = String(clamped);
+            // Height grows from 40% to 100% of screen
+            const heightPct = 40 + 60 * clamped;
+            overlay.style.height = `${heightPct}%`;
           } else {
             overlay.style.opacity = "0";
+            overlay.style.height = "40%";
           }
         }
 
-        // --- Text reveal ---
+        // Text reveal
         const text = textRef.current;
         if (text) {
-          if (progress >= 0.85) {
-            const t = (progress - 0.85) / 0.15;
-            const clamped = Math.min(t, 1);
-            text.style.opacity = String(clamped);
-            text.style.transform = `translateY(${40 - 40 * clamped}px)`;
+          if (progress >= 0.82) {
+            const t = Math.min((progress - 0.82) / 0.18, 1);
+            text.style.opacity = String(t);
+            text.style.transform = `translateY(${40 - 40 * t}px)`;
           } else {
             text.style.opacity = "0";
             text.style.transform = "translateY(40px)";
@@ -188,12 +186,17 @@ export default function HeroCanvas() {
             gap: "20px",
           }}
         >
+          <div style={{ marginBottom: "8px", fontSize: "22px", letterSpacing: "0.15em" }}>
+            Playful
+          </div>
           <div
             style={{
-              width: "200px",
-              height: "1px",
-              background: "rgba(255,255,255,0.15)",
+              width: "220px",
+              height: "2px",
+              background: "rgba(255,255,255,0.1)",
+              borderRadius: "2px",
               position: "relative",
+              overflow: "hidden",
             }}
           >
             <div
@@ -201,88 +204,109 @@ export default function HeroCanvas() {
                 position: "absolute",
                 top: 0,
                 left: 0,
-                height: "1px",
+                height: "100%",
                 background: "#fff",
                 width: `${loadProgress * 100}%`,
                 transition: "width 0.1s linear",
+                borderRadius: "2px",
               }}
             />
           </div>
-          <span>{Math.round(loadProgress * 100)}%</span>
+          <span style={{ color: "rgba(255,255,255,0.4)" }}>
+            {Math.round(loadProgress * 100)}%
+          </span>
         </div>
       )}
 
       {/* Canvas */}
       <canvas
         ref={canvasRef}
-        style={{
-          position: "absolute",
-          inset: 0,
-          display: "block",
-        }}
+        style={{ position: "absolute", inset: 0, display: "block" }}
       />
 
-      {/* Black gradient overlay */}
+      {/* 
+        ─────────────────────────────────────────────────
+        BLACK OVERLAY — rises from bottom like a curtain
+        ─────────────────────────────────────────────────
+        Starts at bottom, grows upward to full screen.
+        Solid black — you WILL feel it.
+      */}
       <div
         ref={overlayRef}
         style={{
           position: "absolute",
-          inset: 0,
-          background: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%)",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "40%",
+          background: "#000",
           opacity: 0,
           pointerEvents: "none",
           zIndex: 2,
+          // Soft edge at the top of the curtain
+          maskImage: "linear-gradient(to bottom, transparent 0%, black 18%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 18%)",
         }}
       />
 
-      {/* Cinematic text reveal — right side */}
+      {/* 
+        Text panel — appears on top of the black curtain
+        ─── TO CHANGE TEXT: edit the strings below ───
+        ─── TO CHANGE BRAND NAME: replace "Playful" ──
+      */}
       <div
         ref={textRef}
         style={{
           position: "absolute",
           right: "6vw",
-          bottom: "10vh",
+          bottom: "8vh",
           zIndex: 10,
           opacity: 0,
           transform: "translateY(40px)",
-          maxWidth: "420px",
+          maxWidth: "440px",
           textAlign: "right",
           pointerEvents: "none",
         }}
       >
+        {/* ↓ CHANGE BRAND LABEL HERE */}
         <p
           style={{
-            margin: "0 0 12px 0",
-            fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(11px, 1.1vw, 13px)",
-            letterSpacing: "0.25em",
+            margin: "0 0 10px 0",
+            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+            fontSize: "clamp(10px, 1vw, 12px)",
+            letterSpacing: "0.35em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.55)",
+            color: "rgba(255,255,255,0.7)",
+            fontWeight: 500,
           }}
         >
-          Scroll Experience
+          Playful Studio
         </p>
+
+        {/* ↓ CHANGE HEADLINE HERE */}
         <h2
           style={{
-            margin: "0 0 20px 0",
+            margin: "0 0 18px 0",
             fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(28px, 3.5vw, 52px)",
-            fontWeight: 300,
-            lineHeight: 1.1,
+            fontSize: "clamp(30px, 4vw, 58px)",
+            fontWeight: 400,
+            lineHeight: 1.08,
             color: "#ffffff",
-            letterSpacing: "-0.01em",
+            letterSpacing: "-0.015em",
           }}
         >
           Every frame,<br />a breath.
         </h2>
+
+        {/* ↓ CHANGE BODY TEXT HERE */}
         <p
           style={{
             margin: 0,
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: "clamp(13px, 1.2vw, 15px)",
-            lineHeight: 1.7,
-            color: "rgba(255,255,255,0.5)",
-            letterSpacing: "0.02em",
+            lineHeight: 1.75,
+            color: "rgba(255,255,255,0.65)",
+            letterSpacing: "0.01em",
             fontWeight: 300,
           }}
         >
@@ -292,4 +316,4 @@ export default function HeroCanvas() {
       </div>
     </div>
   );
-}
+            }
