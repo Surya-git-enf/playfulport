@@ -1,162 +1,57 @@
+"use client";
 
-import type { Metadata } from "next";
+import { useEffect } from "react";
 import HeroCanvas from "@/components/HeroCanvas";
 import FooterCanvas from "@/components/FooterCanvas";
-
-export const metadata: Metadata = {
-  title: "Cinematic Scroll",
-  description: "Apple-style cinematic image sequence scroll animation.",
-};
+import ZigzagSection from "@/components/ZigzagSection";
 
 export default function Home() {
+  useEffect(() => {
+    // Force scroll to top on mount so GSAP pins calculate correctly
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <main
-      style={{
-        background: "#000",
-        color: "#fff",
-        margin: 0,
-        padding: 0,
-        overflowX: "hidden",
-      }}
-    >
-      {/* ── HERO: frames 0 → 269 ───────────────────── */}
+    <div style={{ background: "#000", color: "#fff" }}>
+
+      {/* ── 1. HERO — pinned scroll animation ─────────── */}
       <HeroCanvas />
 
-      {/* ── INTERSTITIAL CONTENT ─────────────────────── */}
-      <section
+      {/* ── 2. ZIGZAG — THIS MUST SHOW AFTER HERO ──────
+          If you can't see this, your HeroCanvas pinSpacing
+          is broken. The red debug border below will confirm
+          the section IS in the DOM. Remove border after fix.
+      ─────────────────────────────────────────────────── */}
+      <div
         style={{
-          minHeight: "100vh",
+          position: "relative",
+          zIndex: 5,
           background: "#000",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "120px 40px",
-          gap: "60px",
         }}
       >
-        {/* Top rule */}
-        <div
-          style={{
-            width: "1px",
-            height: "80px",
-            background: "rgba(255,255,255,0.2)",
-          }}
-        />
+        <ZigzagSection />
+      </div>
 
-        <div
-          style={{
-            maxWidth: "680px",
-            textAlign: "center",
-          }}
-        >
-          <p
-            style={{
-              margin: "0 0 20px 0",
-              fontFamily: "'Georgia', 'Times New Roman', serif",
-              fontSize: "clamp(11px, 1vw, 13px)",
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.35)",
-            }}
-          >
-            Motion &amp; Stillness
-          </p>
-          <h2
-            style={{
-              margin: "0 0 28px 0",
-              fontFamily: "'Georgia', 'Times New Roman', serif",
-              fontSize: "clamp(30px, 4vw, 56px)",
-              fontWeight: 300,
-              lineHeight: 1.15,
-              color: "#fff",
-              letterSpacing: "-0.015em",
-            }}
-          >
-            Cinema lives<br />in the space between<br />frames.
-          </h2>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-              fontSize: "clamp(14px, 1.3vw, 17px)",
-              lineHeight: 1.8,
-              color: "rgba(255,255,255,0.4)",
-              fontWeight: 300,
-              letterSpacing: "0.01em",
-            }}
-          >
-            270 hand-crafted frames, rendered at your pace.<br />
-            Scroll to rewind — and discover the story told backwards.
-          </p>
-        </div>
+      {/* ── 3. FOOTER — pinned reverse animation ───────── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 5,
+          background: "#000",
+        }}
+      >
+        <FooterCanvas />
+      </div>
 
-        {/* Stat row */}
-        <div
-          style={{
-            display: "flex",
-            gap: "80px",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {[
-            { number: "270", label: "Frames" },
-            { number: "60", label: "FPS Target" },
-            { number: "1×", label: "No Stutter" },
-          ].map(({ number, label }) => (
-            <div
-              key={label}
-              style={{ textAlign: "center" }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Georgia', 'Times New Roman', serif",
-                  fontSize: "clamp(36px, 4vw, 56px)",
-                  fontWeight: 300,
-                  color: "#fff",
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1,
-                  marginBottom: "8px",
-                }}
-              >
-                {number}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-                  fontSize: "11px",
-                  letterSpacing: "0.25em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.3)",
-                }}
-              >
-                {label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom rule */}
-        <div
-          style={{
-            width: "1px",
-            height: "80px",
-            background: "rgba(255,255,255,0.2)",
-          }}
-        />
-      </section>
-
-      {/* ── FOOTER: frames 269 → 0 ───────────────── */}
-      <FooterCanvas />
-
-      {/* ── END CREDITS ──────────────────────────── */}
-      <section
+      {/* ── 4. END CREDITS ──────────────────────────────── */}
+      <div
         style={{
           background: "#000",
-          padding: "80px 40px",
+          padding: "60px 40px",
           textAlign: "center",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          position: "relative",
+          zIndex: 5,
         }}
       >
         <p
@@ -165,13 +60,14 @@ export default function Home() {
             fontSize: "11px",
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.18)",
             margin: 0,
           }}
         >
-          Cinematic Scroll &nbsp;·&nbsp; GSAP ScrollTrigger &nbsp;·&nbsp; Canvas API
+          Playful &nbsp;·&nbsp; 3D Website Design Agency &nbsp;·&nbsp; 2024
         </p>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
+
