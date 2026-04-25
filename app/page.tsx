@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from "react";
@@ -13,7 +14,6 @@ export default function Home() {
 
   return (
     <div style={{ background: "#000", color: "#fff" }}>
-
       {/* ── 1. HERO — pinned scroll animation ─────────── */}
       <HeroCanvas />
 
@@ -64,10 +64,9 @@ export default function Home() {
             margin: 0,
           }}
         >
-          Playful &nbsp;·&nbsp; 3D Website Design Agency &nbsp;·&nbsp; 2024
+          Optimus Prime &nbsp;·&nbsp; Bumblebee &nbsp;·&nbsp; Megatron
         </p>
       </div>
     </div>
   );
 }
-
