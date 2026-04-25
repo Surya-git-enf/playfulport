@@ -1,40 +1,47 @@
+
 "use client";
 
 import { useEffect, useRef } from "react";
 
+// ─────────────────────────────────────────────────────────────
+// DATA (3 sections only)
+// ─────────────────────────────────────────────────────────────
 const ITEMS = [
   {
     src: "/transformers/bumble.jpg",
     tag: "Autobot",
     title: "The scout arrives\nin the silence of war.",
     description:
-      "A fast, fearless machine built for motion, loyalty, and impact. This frame sets the tone with tension, energy, and a cinematic glow.",
+      "Fast, fearless, and built for motion. A cinematic entry that sets the tone with energy, tension, and precision.",
   },
   {
     src: "/transformers/Optimus.jpg",
     tag: "Leader",
     title: "A hero forged\nfrom steel and purpose.",
     description:
-      "Strong, noble, and unmistakable. The central visual becomes the anchor of the page, carrying the weight of the story and the scale of the universe.",
+      "Strong, noble, and unmistakable. The centerpiece of the story — commanding presence and visual dominance.",
   },
   {
     src: "/transformers/megatron.jpg",
     tag: "Threat",
     title: "Power rises\nfrom the shadows.",
     description:
-      "Dark energy, sharp contrast, and dramatic presence. This section closes the sequence with a powerful final impression.",
+      "Dark, intense, and overwhelming. A final frame that leaves a lasting, powerful impression.",
   },
 ];
 
+// ─────────────────────────────────────────────────────────────
+// SCROLL ANIMATION HOOK
+// ─────────────────────────────────────────────────────────────
 function useRiseOnScroll(ref: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
     el.style.opacity = "0";
-    el.style.transform = "translateY(52px)";
+    el.style.transform = "translateY(60px)";
     el.style.transition =
-      "opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezier(0.16,1,0.3,1)";
+      "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)";
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -52,6 +59,9 @@ function useRiseOnScroll(ref: React.RefObject<HTMLDivElement | null>) {
   }, [ref]);
 }
 
+// ─────────────────────────────────────────────────────────────
+// SINGLE ZIGZAG ITEM
+// ─────────────────────────────────────────────────────────────
 function ZigzagItem({
   item,
   index,
@@ -71,24 +81,22 @@ function ZigzagItem({
         display: "flex",
         flexDirection: isEven ? "row" : "row-reverse",
         alignItems: "center",
-        justifyContent: "space-between",
-        gap: "clamp(28px, 6vw, 96px)",
-        padding: "clamp(42px, 7vw, 92px) clamp(20px, 8vw, 120px)",
+        gap: "clamp(30px, 6vw, 90px)",
+        padding: "clamp(50px, 7vw, 100px) clamp(20px, 8vw, 120px)",
         borderBottom: "1px solid rgba(255,255,255,0.08)",
-        boxShadow: "0 18px 40px rgba(255,255,255,0.08) inset",
+        boxShadow: "0 20px 60px rgba(255,255,255,0.08) inset",
       }}
     >
+      {/* IMAGE */}
       <div
         style={{
           flex: "0 0 auto",
           width: "clamp(260px, 42vw, 560px)",
-          aspectRatio: "4 / 3",
+          aspectRatio: "4/3",
           borderRadius: "18px",
           overflow: "hidden",
           position: "relative",
           background: "#0b0b0b",
-          boxShadow:
-            "0 0 0 1px rgba(255,255,255,0.08), 0 18px 60px rgba(0,0,0,0.65)",
         }}
       >
         <img
@@ -98,36 +106,36 @@ function ZigzagItem({
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            display: "block",
             transition: "transform 0.6s ease",
           }}
           onMouseEnter={(e) =>
-            (e.currentTarget.style.transform = "scale(1.04)")
+            (e.currentTarget.style.transform = "scale(1.05)")
           }
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.transform = "scale(1)")
+          }
         />
 
+        {/* Overlay */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(135deg, rgba(0,0,0,0.28) 0%, transparent 58%, rgba(0,0,0,0.18) 100%)",
-            pointerEvents: "none",
+              "linear-gradient(135deg, rgba(0,0,0,0.3), transparent)",
           }}
         />
       </div>
 
-      <div style={{ flex: 1, minWidth: 0 }}>
+      {/* TEXT */}
+      <div style={{ flex: 1 }}>
         <p
           style={{
-            margin: "0 0 14px 0",
-            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+            marginBottom: "12px",
             fontSize: "11px",
-            letterSpacing: "0.32em",
+            letterSpacing: "0.35em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.42)",
-            fontWeight: 600,
+            color: "rgba(255,255,255,0.4)",
           }}
         >
           {item.tag}
@@ -135,13 +143,10 @@ function ZigzagItem({
 
         <h3
           style={{
-            margin: "0 0 18px 0",
-            fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(28px, 3.6vw, 56px)",
-            fontWeight: 400,
-            lineHeight: 1.08,
+            marginBottom: "18px",
+            fontSize: "clamp(28px, 3.5vw, 56px)",
+            lineHeight: 1.1,
             color: "#fff",
-            letterSpacing: "-0.02em",
             whiteSpace: "pre-line",
           }}
         >
@@ -150,25 +155,18 @@ function ZigzagItem({
 
         <div
           style={{
-            width: "56px",
+            width: "50px",
             height: "1px",
-            background:
-              "linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0))",
+            background: "rgba(255,255,255,0.6)",
             marginBottom: "18px",
-            boxShadow: "0 0 22px rgba(255,255,255,0.65)",
           }}
         />
 
         <p
           style={{
-            margin: 0,
-            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-            fontSize: "clamp(14px, 1.3vw, 17px)",
-            lineHeight: 1.85,
-            color: "rgba(255,255,255,0.58)",
-            fontWeight: 300,
-            letterSpacing: "0.01em",
             maxWidth: "520px",
+            lineHeight: 1.8,
+            color: "rgba(255,255,255,0.6)",
           }}
         >
           {item.description}
@@ -176,14 +174,9 @@ function ZigzagItem({
 
         <div
           style={{
-            marginTop: "28px",
-            fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(44px, 6vw, 84px)",
-            fontWeight: 400,
+            marginTop: "30px",
+            fontSize: "clamp(50px, 6vw, 80px)",
             color: "rgba(255,255,255,0.05)",
-            lineHeight: 1,
-            letterSpacing: "-0.04em",
-            userSelect: "none",
           }}
         >
           0{index + 1}
@@ -193,6 +186,9 @@ function ZigzagItem({
   );
 }
 
+// ─────────────────────────────────────────────────────────────
+// MAIN SECTION
+// ─────────────────────────────────────────────────────────────
 export default function ZigzagSection() {
   const headerRef = useRef<HTMLDivElement>(null);
   useRiseOnScroll(headerRef);
@@ -201,26 +197,24 @@ export default function ZigzagSection() {
     <section
       style={{
         background: "#000",
-        paddingTop: "clamp(60px, 8vw, 120px)",
-        paddingBottom: "clamp(20px, 4vw, 48px)",
+        paddingTop: "clamp(80px, 10vw, 140px)",
       }}
     >
+      {/* HEADER */}
       <div
         ref={headerRef}
         style={{
           textAlign: "center",
-          padding: "0 clamp(24px, 8vw, 120px) clamp(40px, 6vw, 80px)",
+          padding: "0 20px 80px",
         }}
       >
         <p
           style={{
-            margin: "0 0 16px 0",
-            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: "11px",
-            letterSpacing: "0.36em",
+            letterSpacing: "0.4em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.34)",
-            fontWeight: 600,
+            color: "rgba(255,255,255,0.4)",
+            marginBottom: "16px",
           }}
         >
           Transformers
@@ -228,26 +222,20 @@ export default function ZigzagSection() {
 
         <h2
           style={{
-            margin: 0,
-            fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(30px, 4.2vw, 64px)",
-            fontWeight: 400,
-            lineHeight: 1.08,
+            fontSize: "clamp(32px, 4vw, 64px)",
+            lineHeight: 1.1,
             color: "#fff",
-            letterSpacing: "-0.025em",
           }}
         >
           Between Earth and steel,<br />
-          legends come alive.
+          legends rise.
         </h2>
       </div>
 
+      {/* ITEMS */}
       {ITEMS.map((item, i) => (
         <ZigzagItem key={i} item={item} index={i} />
       ))}
     </section>
   );
-}tion>
-  );
 }
-
