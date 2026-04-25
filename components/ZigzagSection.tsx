@@ -9,21 +9,21 @@ import { useEffect, useRef } from "react";
 // ─────────────────────────────────────────────────────────────────────────────
 const ITEMS = [
   {
-    src: "/sequence/ezgif-frame-001.jpg", // ← change to your own image
+    src: "/transformers/bumble.jpg", // ← change to your own image
     tag: "Design",
     title: "Worlds built\nin three dimensions.",
     description:
       "We craft immersive 3D web experiences that feel alive. Every pixel is intentional — from the first frame to the last interaction.",
   },
   {
-    src: "/sequence/ezgif-frame-090.jpg", // ← change to your own image
+    src: "/transformers/megatron.jpg", // ← change to your own image
     tag: "Motion",
     title: "Motion that\ntells your story.",
     description:
       "Animation is our language. We translate your brand into fluid, cinematic movement that your audience remembers long after they scroll away.",
   },
   {
-    src: "/sequence/ezgif-frame-180.jpg", // ← change to your own image
+    src: "public/transformers/optimus.jpg", // ← change to your own image
     tag: "Experience",
     title: "Experiences\nbeyond the screen.",
     description:
