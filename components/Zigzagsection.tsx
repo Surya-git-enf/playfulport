@@ -2,51 +2,39 @@
 
 import { useEffect, useRef } from "react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ZIGZAG ITEMS — edit this array to change images, titles, and descriptions
-// ↓ Put your images in /public/ and update the src paths below
-// ─────────────────────────────────────────────────────────────────────────────
 const ITEMS = [
   {
-    src: "/sequence/ezgif-frame-001.jpg", // ← change to your own image
-    tag: "Design",
-    title: "Worlds built\nin three dimensions.",
+    src: "/transformers/bumble.jpg",
+    tag: "Autobot",
+    title: "The scout arrives\nin the silence of war.",
     description:
-      "We craft immersive 3D web experiences that feel alive. Every pixel is intentional — from the first frame to the last interaction.",
+      "A fast, fearless machine built for motion, loyalty, and impact. This frame sets the tone with tension, energy, and a cinematic glow.",
   },
   {
-    src: "/sequence/ezgif-frame-090.jpg", // ← change to your own image
-    tag: "Motion",
-    title: "Motion that\ntells your story.",
+    src: "/transformers/Optimus.jpg",
+    tag: "Leader",
+    title: "A hero forged\nfrom steel and purpose.",
     description:
-      "Animation is our language. We translate your brand into fluid, cinematic movement that your audience remembers long after they scroll away.",
+      "Strong, noble, and unmistakable. The central visual becomes the anchor of the page, carrying the weight of the story and the scale of the universe.",
   },
   {
-    src: "/sequence/ezgif-frame-180.jpg", // ← change to your own image
-    tag: "Experience",
-    title: "Experiences\nbeyond the screen.",
+    src: "/transformers/megatron.jpg",
+    tag: "Threat",
+    title: "Power rises\nfrom the shadows.",
     description:
-      "From concept to launch, Playful engineers digital products that feel like physical worlds — textured, weighted, and unforgettable.",
-  },
-  {
-    src: "/sequence/ezgif-frame-270.jpg", // ← change to your own image (last frame)
-    tag: "Agency",
-    title: "A studio that\nthinks differently.",
-    description:
-      "We are a small, focused team obsessed with the intersection of technology and art. Book a session and let's build something extraordinary together.",
+      "Dark energy, sharp contrast, and dramatic presence. This section closes the sequence with a powerful final impression.",
   },
 ];
-// ─────────────────────────────────────────────────────────────────────────────
 
 function useRiseOnScroll(ref: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    // Initial hidden state
     el.style.opacity = "0";
     el.style.transform = "translateY(52px)";
-    el.style.transition = "opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezier(0.16,1,0.3,1)";
+    el.style.transition =
+      "opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezier(0.16,1,0.3,1)";
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -83,22 +71,24 @@ function ZigzagItem({
         display: "flex",
         flexDirection: isEven ? "row" : "row-reverse",
         alignItems: "center",
-        gap: "clamp(32px, 6vw, 96px)",
-        padding: "clamp(40px, 6vw, 80px) clamp(24px, 8vw, 120px)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        justifyContent: "space-between",
+        gap: "clamp(28px, 6vw, 96px)",
+        padding: "clamp(42px, 7vw, 92px) clamp(20px, 8vw, 120px)",
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 18px 40px rgba(255,255,255,0.08) inset",
       }}
-      // Responsive stacking via inline media (handled by max-width wrapper)
     >
-      {/* ── IMAGE ───────────────────────────────────── */}
       <div
         style={{
           flex: "0 0 auto",
-          width: "clamp(260px, 44vw, 560px)",
-          aspectRatio: "4/3",
-          borderRadius: "16px",
+          width: "clamp(260px, 42vw, 560px)",
+          aspectRatio: "4 / 3",
+          borderRadius: "18px",
           overflow: "hidden",
           position: "relative",
-          background: "#111",
+          background: "#0b0b0b",
+          boxShadow:
+            "0 0 0 1px rgba(255,255,255,0.08), 0 18px 60px rgba(0,0,0,0.65)",
         }}
       >
         <img
@@ -109,98 +99,88 @@ function ZigzagItem({
             height: "100%",
             objectFit: "cover",
             display: "block",
-            // Subtle scale-in on load feel
             transition: "transform 0.6s ease",
           }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.transform = "scale(1.04)")
           }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.transform = "scale(1)")
-          }
+          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
         />
-        {/* Subtle vignette on image */}
+
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(135deg, rgba(0,0,0,0.18) 0%, transparent 60%)",
+              "linear-gradient(135deg, rgba(0,0,0,0.28) 0%, transparent 58%, rgba(0,0,0,0.18) 100%)",
             pointerEvents: "none",
           }}
         />
       </div>
 
-      {/* ── TEXT ────────────────────────────────────── */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        {/* Tag / label */}
         <p
           style={{
-            margin: "0 0 16px 0",
+            margin: "0 0 14px 0",
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: "11px",
-            letterSpacing: "0.3em",
+            letterSpacing: "0.32em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.35)",
-            fontWeight: 500,
+            color: "rgba(255,255,255,0.42)",
+            fontWeight: 600,
           }}
         >
-          {/* ↓ CHANGE TAG */}
           {item.tag}
         </p>
 
-        {/* Headline */}
         <h3
           style={{
-            margin: "0 0 20px 0",
+            margin: "0 0 18px 0",
             fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(26px, 3.2vw, 48px)",
+            fontSize: "clamp(28px, 3.6vw, 56px)",
             fontWeight: 400,
-            lineHeight: 1.12,
+            lineHeight: 1.08,
             color: "#fff",
-            letterSpacing: "-0.015em",
+            letterSpacing: "-0.02em",
             whiteSpace: "pre-line",
           }}
         >
-          {/* ↓ CHANGE HEADLINE */}
           {item.title}
         </h3>
 
-        {/* Divider */}
         <div
           style={{
-            width: "36px",
+            width: "56px",
             height: "1px",
-            background: "rgba(255,255,255,0.25)",
-            marginBottom: "20px",
+            background:
+              "linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0))",
+            marginBottom: "18px",
+            boxShadow: "0 0 22px rgba(255,255,255,0.65)",
           }}
         />
 
-        {/* Description */}
         <p
           style={{
             margin: 0,
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-            fontSize: "clamp(14px, 1.3vw, 16px)",
-            lineHeight: 1.8,
-            color: "rgba(255,255,255,0.5)",
+            fontSize: "clamp(14px, 1.3vw, 17px)",
+            lineHeight: 1.85,
+            color: "rgba(255,255,255,0.58)",
             fontWeight: 300,
             letterSpacing: "0.01em",
-            maxWidth: "460px",
+            maxWidth: "520px",
           }}
         >
-          {/* ↓ CHANGE DESCRIPTION */}
           {item.description}
         </p>
 
-        {/* Index number — decorative */}
         <div
           style={{
-            marginTop: "32px",
+            marginTop: "28px",
             fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(48px, 6vw, 80px)",
+            fontSize: "clamp(44px, 6vw, 84px)",
             fontWeight: 400,
-            color: "rgba(255,255,255,0.04)",
+            color: "rgba(255,255,255,0.05)",
             lineHeight: 1,
             letterSpacing: "-0.04em",
             userSelect: "none",
@@ -222,9 +202,9 @@ export default function ZigzagSection() {
       style={{
         background: "#000",
         paddingTop: "clamp(60px, 8vw, 120px)",
+        paddingBottom: "clamp(20px, 4vw, 48px)",
       }}
     >
-      {/* ── SECTION HEADER ─────────────────────────── */}
       <div
         ref={headerRef}
         style={{
@@ -237,36 +217,37 @@ export default function ZigzagSection() {
             margin: "0 0 16px 0",
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: "11px",
-            letterSpacing: "0.35em",
+            letterSpacing: "0.36em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.3)",
-            fontWeight: 500,
+            color: "rgba(255,255,255,0.34)",
+            fontWeight: 600,
           }}
         >
-          {/* ↓ CHANGE SECTION EYEBROW */}
-          What We Do
+          Transformers
         </p>
+
         <h2
           style={{
             margin: 0,
             fontFamily: "'Georgia', 'Times New Roman', serif",
-            fontSize: "clamp(28px, 4vw, 56px)",
+            fontSize: "clamp(30px, 4.2vw, 64px)",
             fontWeight: 400,
-            lineHeight: 1.12,
+            lineHeight: 1.08,
             color: "#fff",
-            letterSpacing: "-0.02em",
+            letterSpacing: "-0.025em",
           }}
         >
-          {/* ↓ CHANGE SECTION HEADLINE */}
-          Crafting the internet's<br />most cinematic websites.
+          Between Earth and steel,<br />
+          legends come alive.
         </h2>
       </div>
 
-      {/* ── ZIGZAG ROWS ────────────────────────────── */}
       {ITEMS.map((item, i) => (
         <ZigzagItem key={i} item={item} index={i} />
       ))}
     </section>
+  );
+}tion>
   );
 }
 
