@@ -4,8 +4,8 @@ import HeroCanvas from "@/components/HeroCanvas";
 import FooterCanvas from "@/components/FooterCanvas";
 
 export const metadata: Metadata = {
-  title: "Cinematic Scroll",
-  description: "Apple-style cinematic image sequence scroll animation.",
+  title: "Optimus Prime",
+  description: "A symbol of strength, honor, and hope. Born to protect. Built to lead.",
 };
 
 export default function Home() {
@@ -60,7 +60,7 @@ export default function Home() {
               color: "rgba(255,255,255,0.35)",
             }}
           >
-            Motion &amp; Stillness
+            Optimus Prime<br />   Born to lead.
           </p>
           <h2
             style={{
@@ -73,7 +73,7 @@ export default function Home() {
               letterSpacing: "-0.015em",
             }}
           >
-            Cinema lives<br />in the space between<br />frames.
+            The Rise of Optimus Prime
           </h2>
           <p
             style={{
@@ -86,8 +86,7 @@ export default function Home() {
               letterSpacing: "0.01em",
             }}
           >
-            270 hand-crafted frames, rendered at your pace.<br />
-            Scroll to rewind — and discover the story told backwards.
+            Steel, courage, and destiny — one leader against the dark.
           </p>
         </div>
 
